@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique()->comment('用户登陆账号');
             $table->string('password')->comment('登录密码');
             $table->string('email')->comment('用户邮箱');
+            $table->string('mobile', 11)->comment('用户手机号');
             $table->string('token', 80)->unique()->nullable()->comment('token值');
             $table->string('avatar', 100)->default('')->comment('用户头像');
 			$table->string('question', 50)->comment('密码提示问题');
@@ -41,6 +42,7 @@ class CreateUsersTable extends Migration
                 'username'=>'test',
                 'password'=>$password_hash,
                 'email'=>'test.xmall.com',
+                'mobile'=>'18600000001',
                 'token'=>$token,
                 'question'=>'',
                 'answer'=>'',

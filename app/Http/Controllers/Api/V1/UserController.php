@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Rules\Mobile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -79,18 +81,47 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_name' => 'required|min:3',
+            'username' => 'required|min:3',
             'password' => 'required|min:6|max:18',
             'passwordConfirm' => 'required|min:6|max:18',
-            'mobile' => 'required|email',
+            'mobile' => ['required', new Mobile],
             'email' => 'required|email',
             'question' => 'required',
             'answer' => 'required'
         ]);
-        dd($request->all());
         if ($validator->fails()) {
             return error_json(10001);
         };
+
+        $username = $request->input('username');
+        $userExist = User::withoutGlobalScope('avaiable')->where('username', $username)->first();
+        if ($userExist)
+        {
+            return error_json(10110);
+        }
+
+        $password = $request->input('password');
+        $passwordConfirm = $request->input('passwordConfirm');
+        if ($password != $passwordConfirm)
+        {
+            return error_json(10116);
+        }
+
+        $password = bcrypt($password);
+        $mobile = $request->input('mobile');
+        $email = $request->input('email');
+        $question = $request->input('question');
+        $answer = $request->input('answer');
+        $token = Str::random(60);
+        $name = '';
+
+        try {
+            User::create(compact('username', 'password', 'mobile', 'email', 'question', 'answer', 'token', 'name'));
+        } catch (\Exception $e) {
+            return error_json(10112);
+        }
+
+        return success_json();
     }
 
     /**

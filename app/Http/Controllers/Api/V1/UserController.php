@@ -150,6 +150,7 @@ class UserController extends Controller
      * 获取用户密码提示问题
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @author PeakXin<xinyflove@sina.com>
      */
     public function forgetGtQuestion(Request $request)
     {
@@ -174,6 +175,7 @@ class UserController extends Controller
      * 检查密码提示问题答案
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @author PeakXin<xinyflove@sina.com>
      */
     public function forgetCheckAnswer(Request $request)
     {
@@ -205,6 +207,12 @@ class UserController extends Controller
         return success_json($user);
     }
 
+    /**
+     * 重置密码
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @author PeakXin<xinyflove@sina.com>
+     */
     public function forgetResetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [

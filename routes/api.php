@@ -40,6 +40,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
         /*用户模块*/
         Route::group(['prefix' => 'user'], function () {
             Route::post('login_info', 'UserController@loginInfo'); // 用户登录信息
+            Route::post('get_info', 'UserController@getInfo'); // 获取用户信息
+            Route::post('update_info', 'UserController@updateInfo'); // 更新个人信息
+            Route::post('reset_password', 'UserController@resetPassword'); // 登录状态下更新密码
         });
         /*购物车模块*/
         Route::group(['prefix' => 'cart'], function () {

@@ -54,6 +54,7 @@ class UserController extends Controller
      * 检查用户名
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @author PeakXin<xinyflove@sina.com>
      */
     public function checkValid(Request $request)
     {
@@ -78,6 +79,12 @@ class UserController extends Controller
         return success_json();
     }
 
+    /**
+     * 用户注册
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @author PeakXin<xinyflove@sina.com>
+     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -137,5 +144,93 @@ class UserController extends Controller
         ];
 
         return success_json($data);
+    }
+
+    /**
+     * 获取用户密码提示问题
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function forgetGtQuestion(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $username = $request->input('username');
+        $user = User::where('username', $username)->select(['question'])->first();
+        if (!$user)
+        {
+            return error_json(10111);
+        }
+
+        return success_json($user);
+    }
+
+    /**
+     * 检查密码提示问题答案
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function forgetCheckAnswer(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'question' => 'required',
+            'answer' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $username = $request->input('username');
+        $question = $request->input('question');
+        $answer = $request->input('answer');
+
+        $where = [
+            'username' => $username,
+            'question' => $question,
+            'answer' => $answer,
+        ];
+        $user = User::where($where)->select(['token'])->first();
+        
+        if (!$user)
+        {
+            return error_json(10117);
+        }
+
+        return success_json($user);
+    }
+
+    public function forgetResetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'password' => 'required|min:6|max:18',
+            'token' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $username = $request->input('username');
+        $password = $request->input('password');
+        $token = $request->input('token');
+
+        try {
+            $where = [
+                'username' => $username,
+                'token' => $token
+            ];
+            $password = bcrypt($password);
+            User::where($where)->update(['password'=>$password]);
+        }  catch (\Exception $e) {
+            return error_json(10112);
+        }
+
+        return success_json();
     }
 }

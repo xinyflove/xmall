@@ -23,17 +23,25 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
         Route::any('/', 'TestController@index'); // init test
     });
 
-    Route::post('user/login', 'UserController@login')->name('api.v1.user.login'); // 用户登录
-    Route::post('user/register', 'UserController@register'); // 用户注册
-    Route::post('user/check_valid', 'UserController@checkValid'); // 检查用户名
+    /*用户模块*/
+    Route::group(['prefix' => 'user'], function () {
+        Route::post('login', 'UserController@login')->name('api.v1.user.login'); // 用户登录
+        Route::post('register', 'UserController@register'); // 用户注册
+        Route::post('check_valid', 'UserController@checkValid'); // 检查用户名
+        Route::post('forget_get_question', 'UserController@forgetGtQuestion'); // 获取用户密码提示问题
+        Route::post('forget_check_answer', 'UserController@forgetCheckAnswer'); // 检查密码提示问题答案
+        Route::post('forget_reset_password', 'UserController@forgetResetPassword'); // 重置密码
+    });
+    
 
 
     /*需要登录*/
     Route::group(['middleware' => ['checkuser']], function () {
+        /*用户模块*/
         Route::group(['prefix' => 'user'], function () {
             Route::post('login_info', 'UserController@loginInfo'); // 用户登录信息
         });
-
+        /*购物车模块*/
         Route::group(['prefix' => 'cart'], function () {
             Route::get('product_count', 'CartController@productCount'); // 购物车数量
         });

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Rules\Mobile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -303,31 +304,40 @@ class UserController extends Controller
         return success_json();
     }
 
+    /**
+     * 登录状态下更新密码
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function resetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'mobile' => ['required', new Mobile],
-            'email' => 'required|email',
             'password' => 'required|min:6|max:18',
-            'token' => 'required',
+            'passwordNew' => 'required|min:6|max:18',
         ]);
         if ($validator->fails()) {
             return error_json(10001);
         };
 
-        $username = $request->input('username');
-        $password = $request->input('password');
-        $token = $request->input('token');
+        $user = User::find($request->userInfo['id']);
+        if (!$user)
+        {
+            return error_json(10201);
+        }
 
+        $password = $request->input('password');
+        $passwordNew = $request->input('passwordNew');
+
+        if (!Hash::check($password, $user->password))// 验证原密码
+        {
+            return error_json(10210);
+        }
+        
         try {
-            $where = [
-                'username' => $username,
-                'token' => $token
-            ];
-            $password = bcrypt($password);
-            User::where($where)->update(['password'=>$password]);
+            $user->password = bcrypt($passwordNew);
+            $user->save();
         }  catch (\Exception $e) {
-            return error_json(10202);
+            return error_json(10211);
         }
 
         return success_json();

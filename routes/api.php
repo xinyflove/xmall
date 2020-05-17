@@ -32,7 +32,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
         Route::post('forget_check_answer', 'UserController@forgetCheckAnswer'); // 检查密码提示问题答案
         Route::post('forget_reset_password', 'UserController@forgetResetPassword'); // 重置密码
     });
-    
+
+    Route::group(['prefix' => 'product'], function () {
+        Route::get('list', 'ProductController@index'); // 获取商品列表
+    });
 
 
     /*需要登录*/

@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    //
+    //protected $guarded = [];// 不可以注入的字段数据
 }

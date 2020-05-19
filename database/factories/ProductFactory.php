@@ -10,5 +10,9 @@ $factory->define(Product::class, function (Faker $faker) {
         'title' => $faker->sentence(15),// 最多15个单词
         'price' => $faker->randomNumber(2),
         'stock' => $faker->numberBetween(10, 99),
+        'main_image' => '',
+        'image_list' => '',
+        'pc_desc' => '',
+        'wap_desc' => '',
     ];
 });

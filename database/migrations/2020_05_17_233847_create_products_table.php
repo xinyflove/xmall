@@ -20,7 +20,7 @@ class CreateProductsTable extends Migration
             $table->decimal('price', 20, 2)->comment('商品价格');
             $table->integer('stock')->comment('商品库存');
             $table->integer('cat_id')->default(0)->comment('商品分类ID');
-            $table->string('main_image')->comment('商品主图');
+            $table->string('main_img')->comment('商品主图');
             $table->string('image_list')->comment('商品图列表');
             $table->text('pc_desc')->comment('PC端商品详情');
             $table->text('wap_desc')->comment('WAP端商品详情');

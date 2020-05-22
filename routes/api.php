@@ -35,6 +35,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
 
     Route::group(['prefix' => 'product'], function () {
         Route::get('list', 'ProductController@index'); // 获取商品列表
+        Route::get('detail', 'ProductController@detail'); // 获取商品详细信息
     });
 
 

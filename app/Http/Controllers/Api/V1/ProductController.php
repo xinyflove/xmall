@@ -5,16 +5,24 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    protected $_image_host = 'http://127.0.0.1:8000';
+
+    /**
+     * 获取商品列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         $filter['pageSize'] = intval($request->input('pageSize', 20));
         $filter['pageNum'] = intval($request->input('pageNum', 1));
         $filter['keyword'] = $request->input('keyword', '');
         $filter['cat_id'] = $request->input('cat_id', 0);
-        $filter['order_by'] = $request->input('order_by', 'default');
+        $filter['orderBy'] = $request->input('orderBy', 'default');
 
         $where = [];
         if (!empty($filter['keyword']))
@@ -25,7 +33,7 @@ class ProductController extends Controller
         {
             $where[] = ['cat_id', '=', $filter['cat_id']];
         }
-        $order_by = (new Product)->getOrderBy($filter['order_by']);
+        $order_by = (new Product)->getOrderBy($filter['orderBy']);
         $offset = ($filter['pageNum'] - 1) * $filter['pageSize'];
 
         $product = Product::withoutGlobalScope('avaiable')->where($where);
@@ -34,7 +42,7 @@ class ProductController extends Controller
             ->offset($offset)->limit($filter['pageSize'])->get();
         foreach ($list as &$item)
         {
-            $item['image_host'] = 'http://127.0.0.1:8000';
+            $item['image_host'] = $this->_image_host;
         }
         unset($item);
 
@@ -54,6 +62,34 @@ class ProductController extends Controller
             'nextPage' => $nextPage,
             'pageNum' => $filter['pageNum'],
         ];
+
         return success_json($data);
+    }
+
+    /**
+     * 获取商品详细信息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'productId' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $productId = $request->input('productId');
+        $product = Product::find($productId);
+
+        if (!$product)
+        {
+            return error_json(10300);
+        }
+
+        $product->image_host = $this->_image_host;
+
+        return success_json($product);
     }
 }

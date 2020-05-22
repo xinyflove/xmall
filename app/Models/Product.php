@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -17,16 +18,18 @@ class Product extends Model
     {
         $fields = ['created_at', 'price'];
         $sort = ['DESC', 'ASC'];
-        if ($order_by == 'default')
+        if ($order_by != 'default')
         {
-            return [$fields[0], $sort[0]];
-        }
+            $order_by = explode('_', $order_by);
+            if (count($order_by) == 2)
+            {
+                $order_by[1] = strtoupper($order_by[1]);
+                if (in_array($order_by[0], $fields) && in_array($order_by[1], $sort))
+                {
+                    return $order_by;
+                }
+            }
 
-        $order_by = implode('-', $order_by);
-        
-        if (in_array($order_by[0], $fields) && in_array($order_by[1], $sort))
-        {
-            return $order_by;
         }
 
         return [$fields[0], $sort[0]];

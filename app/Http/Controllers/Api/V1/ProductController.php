@@ -24,7 +24,7 @@ class ProductController extends Controller
         $filter['cat_id'] = $request->input('cat_id', 0);
         $filter['orderBy'] = $request->input('orderBy', 'default');
 
-        $where = [];
+        $where[] = ['status', '=', 1];
         if (!empty($filter['keyword']))
         {
             $where[] = ['title', 'like', "%{$filter['keyword']}%"];
@@ -81,8 +81,8 @@ class ProductController extends Controller
         };
 
         $productId = $request->input('productId');
-        $product = Product::find($productId);
-
+        $product = Product::where('status', 1)->find($productId);
+        
         if (!$product)
         {
             return error_json(10300);

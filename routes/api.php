@@ -54,6 +54,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
             Route::get('add', 'CartController@add'); // 添加购物车
             Route::get('select', 'CartController@select'); // 选择购物车商品
             Route::get('un_select', 'CartController@unSelect'); // 取消选择购物车商品
+            Route::get('select_all', 'CartController@selectAll'); // 选中全部商品
+            Route::get('un_select_all', 'CartController@unSelectAll'); // 取消选中全部商品
+            Route::get('update', 'CartController@update'); // 更新购物车商品数量
             Route::get('product_count', 'CartController@productCount'); // 购物车数量
         });
     });

@@ -124,7 +124,7 @@ class CartController extends Controller
             $cart->checked = Cart::CHECKED;
             $cart->save();
         } catch (\Exception $e) {
-            return error_json(10400);
+            return error_json(10401);
         }
 
         $data = CartService::getUserCartList($user_id);
@@ -164,7 +164,103 @@ class CartController extends Controller
             $cart->checked = Cart::UNCHECKED;
             $cart->save();
         } catch (\Exception $e) {
-            return error_json(10400);
+            return error_json(10402);
+        }
+
+        $data = CartService::getUserCartList($user_id);
+
+        return success_json($data);
+    }
+
+    /**
+     * 选中全部商品
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function selectAll(Request $request)
+    {
+        $user_id = $request->userInfo['id'];
+
+        try {
+            Cart::where('user_id', $user_id)->update(['checked'=>Cart::CHECKED]);
+        } catch (\Exception $e) {
+            return error_json(10403);
+        }
+
+        $data = CartService::getUserCartList($user_id);
+
+        return success_json($data);
+    }
+
+    /**
+     * 取消选中全部商品
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unSelectAll(Request $request)
+    {
+        $user_id = $request->userInfo['id'];
+
+        try {
+            Cart::where('user_id', $user_id)->update(['checked'=>Cart::UNCHECKED]);
+        } catch (\Exception $e) {
+            return error_json(10404);
+        }
+
+        $data = CartService::getUserCartList($user_id);
+
+        return success_json($data);
+    }
+
+    /**
+     * 更新购物车商品数量
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'productId' => 'required',
+            'count' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $productId = $request->input('productId');
+        $count = $request->input('count');
+        $user_id = $request->userInfo['id'];
+
+        /*验证商品*/
+        $product = Product::find($productId);
+        if (!$product)
+        {
+            return error_json(10300);
+        }
+        if ($product->status == 0)
+        {
+            return error_json(10301);
+        }
+        if ($product->stock <= 0)
+        {
+            return error_json(10302);
+        }
+        if ($product->stock < $count)
+        {
+            return error_json(10303);
+        }
+
+        $cart = Cart::where(['user_id'=>$user_id, 'product_id'=>$productId])->first();
+        if (!$cart)
+        {
+            return error_json(10405);
+        }
+
+        try {
+            $cart->quantity = $count;
+            $cart->save();
+        } catch (\Exception $e) {
+            return error_json(10405);
         }
 
         $data = CartService::getUserCartList($user_id);

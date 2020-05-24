@@ -50,7 +50,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
         });
         /*购物车模块*/
         Route::group(['prefix' => 'cart'], function () {
+            Route::get('list', 'CartController@index'); // 购物车
             Route::get('add', 'CartController@add'); // 添加购物车
+            Route::get('select', 'CartController@select'); // 选择购物车商品
+            Route::get('un_select', 'CartController@unSelect'); // 取消选择购物车商品
             Route::get('product_count', 'CartController@productCount'); // 购物车数量
         });
     });

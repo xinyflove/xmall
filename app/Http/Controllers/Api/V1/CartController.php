@@ -2,14 +2,30 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
+    protected $_image_host = 'http://127.0.0.1:8000';
+
+    /**
+     * 购物车
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
+    {
+
+        $user_id = $request->userInfo['id'];
+        $data = CartService::getUserCartList($user_id);
+
+        return success_json($data);
+    }
 
     /**
      * 添加购物车
@@ -70,12 +86,92 @@ class CartController extends Controller
                 Cart::create($data);
             }
         } catch (\Exception $e) {
-            return error_json(10400, $e->getMessage());
+            return error_json(10400);
         }
 
         return success_json();
     }
 
+    /**
+     * 选择购物车商品
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function select(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'productId' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $productId = $request->input('productId');
+        $user_id = $request->userInfo['id'];
+        
+        $where = [
+            'user_id' => $user_id,
+            'product_id' => $productId,
+        ];
+        $cart = Cart::where($where)->first();
+        
+        if (!$cart)
+        {
+            return error_json(10401);
+        }
+
+        try {
+            $cart->checked = Cart::CHECKED;
+            $cart->save();
+        } catch (\Exception $e) {
+            return error_json(10400);
+        }
+
+        $data = CartService::getUserCartList($user_id);
+
+        return success_json($data);
+    }
+
+    /**
+     * 取消选择购物车商品
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unSelect(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'productId' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $productId = $request->input('productId');
+        $user_id = $request->userInfo['id'];
+
+        $where = [
+            'user_id' => $user_id,
+            'product_id' => $productId,
+        ];
+        $cart = Cart::where($where)->first();
+
+        if (!$cart)
+        {
+            return error_json(10402);
+        }
+
+        try {
+            $cart->checked = Cart::UNCHECKED;
+            $cart->save();
+        } catch (\Exception $e) {
+            return error_json(10400);
+        }
+
+        $data = CartService::getUserCartList($user_id);
+
+        return success_json($data);
+    }
+    
     /**
      * 购物车数量
      * @param Request $request

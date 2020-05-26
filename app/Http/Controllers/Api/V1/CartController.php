@@ -267,6 +267,35 @@ class CartController extends Controller
 
         return success_json($data);
     }
+
+    /**
+     * 删除指定商品
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'productIds' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $productIds = $request->input('productIds');
+        $user_id = $request->userInfo['id'];
+        $productIdArr = explode(',', $productIds);
+
+        try {
+            Cart::where(['user_id'=>$user_id])->whereIn('product_id', $productIdArr)->delete();
+        } catch (\Exception $e) {
+            return error_json(10406);
+        }
+
+        $data = CartService::getUserCartList($user_id);
+
+        return success_json($data);
+    }
     
     /**
      * 购物车数量

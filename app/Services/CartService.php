@@ -28,13 +28,14 @@ class CartService
 
         foreach ($list as $item)
         {
+            $item->product_total = $item->product->price * $item->quantity;
             if ($item->checked == 0)
             {
                 $allChecked = false;
             }
             else
             {
-                $cartTotalPrice += $item->product->price * $item->quantity;
+                $cartTotalPrice += $item->product_total;
             }
 
             $item->product->image_host = self::IMAGE_HOST;

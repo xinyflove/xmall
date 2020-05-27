@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
-    protected $_image_host = 'http://127.0.0.1:8000';
 
     /**
      * 购物车

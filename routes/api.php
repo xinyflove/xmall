@@ -60,5 +60,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
             Route::get('delete', 'CartController@delete'); // 删除指定商品
             Route::get('product_count', 'CartController@productCount'); // 购物车数量
         });
+        /*订单模块*/
+        Route::group(['prefix' => 'order'], function () {
+            Route::get('get_cart_product', 'OrderController@getCartProduct'); // 获取产品列表信息
+        });
     });
 });

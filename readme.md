@@ -1,72 +1,138 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+# XMall电商系统
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+> XMall电商系统，提供数据接口
 
-## About Laravel
+## 软件架构
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel 5.8.38
+- PHP
+- MySQL
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 安装教程
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 环境要求
 
-## Learning Laravel
+- Nginx/Apache/IIS
+- MySQL 5.5+
+- PHP >= 7.2.9
+- OpenSSL PHP 拓展
+- PDO PHP 拓展
+- Mbstring PHP 拓展
+- Tokenizer PHP 拓展
+- XML PHP 拓展
+- Ctype PHP 拓展
+- JSON PHP 拓展
+- BCMath PHP 拓展
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+建议使用环境：Linux + Nginx + PHP >=7.2.9 + MySQL 5.7
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 安装部署
 
-## Laravel Sponsors
+1. 下载源码
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+从 [https://github.com/xinyflove/xbook](https://github.com/xinyflove/xmall) 下载代码到本地
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
+2. 执行 composer 命令
 
-## Contributing
+```bash
+composer install
+composer dump-autoload
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. 创建 `.env` 环境配置文件
 
-## Security Vulnerabilities
+```
+cp .env.dev .env
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4. 生成 key 值
 
-## License
+```
+php artisan key:generate
+```
 
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5. 修改 `.env` 环境配置文件
+
+  - 数据库配置
+  - `APP_URL` 配置
+
+6. 测试数据库配置是否正确
+
+```bash
+php artisan migrate:install
+```
+
+如果出现`Migration table created successfully.`则配置正确。
+
+7. 执行 `migrate`命令安装表
+
+```bash
+php artisan migrate
+```
+
+8. 确认文件权限
+
+`storage` 和 `bootstrap/cache` 目录应该允许你的 Web 服务器写入，否则 Laravel 将无法写入。
+
+9. 文件储存配置
+
+`.env` 文件添加 `FILESYSTEM_DRIVER=public` 配置
+
+执行命令 `php artisan storage:link`，`./public/storage/` 目录 链接到 `./storage/app/public/` 目录
+
+10. 启动项目
+
+本地开发
+
+```bash
+php artisan serve
+```
+
+Web 服务器配置 [传送门](https://learnku.com/docs/laravel/5.8/installation/3879#web-server-configuration)
+
+## 原始数据
+
+### 管理员
+
+- 超管
+  - username:admin
+  - password:******
+
+### 用户
+
+- 测试用户
+  - username:test
+  - password:******
+
+## 测试数据
+
+### 商品测试数据
+
+```bash
+php artisan db:seed --class=ProductsTableSeeder
+```
+
+## 功能介绍
+
+## 开发说明
+
+### 生成 controller
+
+```bash
+php artisan make:controller Web/TestController
+php artisan make:controller Admin/TestController
+php artisan make:controller Api/V1/TestController
+php artisan make:controller AdminApi/V1/TestController
+```
+
+### 创建 Model
+
+```bash
+php artisan make:model Models/User
+```
+
+### 数据迁移
+
+```bash
+php artisan make:migration create_user_table
+```

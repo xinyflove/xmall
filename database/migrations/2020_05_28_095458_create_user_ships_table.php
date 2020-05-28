@@ -25,7 +25,7 @@ class CreateUserShipsTable extends Migration
             $table->string('city', 20)->comment('所在市');
             $table->string('district', 20)->comment('所在县/市/区');
             $table->string('address', 50)->comment('详细地址');
-            $table->unsignedTinyInteger('def')->default(0)->comment('详细地址');
+            $table->unsignedTinyInteger('def')->default(0)->comment('默认地址 1是/0否');
             $table->timestamps();
         });
         DB::statement("alter table `user_ships` comment '用户收货地址表'");

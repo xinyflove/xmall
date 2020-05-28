@@ -178,4 +178,45 @@ class UserShipController extends Controller
 
         return success_json();
     }
+
+    /**
+     * 删除收件人收货信息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'shipId' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $shipId = $request->input('shipId');
+        $ship = UserShip::find($shipId);
+        if (!$ship)
+        {
+            return error_json(10501);
+        }
+
+        try {
+            if ($ship->def)
+            {
+                $user_id = $request->userInfo['id'];
+                $oneShip = UserShip::where('user_id', $user_id)->first();
+                if ($oneShip)
+                {
+                    $oneShip->def = UserShip::SHIP_DEF;
+                    $oneShip->save();
+                }
+            }
+
+            $ship->delete();
+        } catch (\Exception $e) {
+            return error_json(10502);
+        }
+
+        return success_json();
+    }
 }

@@ -19,7 +19,7 @@ class CreateCartsTable extends Migration
             $table->integer('user_id')->comment('用户ID');
             $table->integer('product_id')->comment('商品ID');
             $table->integer('quantity')->comment('商品数量');
-            $table->tinyInteger('checked')->default(0)->comment('是否选中 0未选;1已选');
+            $table->unsignedTinyInteger('checked')->default(0)->comment('是否选中 0未选;1已选');
             $table->decimal('cart_price', 20, 2)->comment('加入购物车时商品价格');
             $table->timestamps();
         });

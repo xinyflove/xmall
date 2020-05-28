@@ -64,5 +64,12 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
         Route::group(['prefix' => 'order'], function () {
             Route::get('get_cart_product', 'OrderController@getCartProduct'); // 获取产品列表信息
         });
+        /*用户收货地址模块*/
+        Route::group(['prefix' => 'ship'], function () {
+            Route::get('list', 'UserShipController@index'); // 获取地址列表信息
+            Route::post('add', 'UserShipController@add'); // 新建收件人收货信息
+            Route::get('edit', 'UserShipController@edit'); // 获取要编辑的收货人收货信息
+            Route::post('update', 'UserShipController@update'); // 更新收件人收货信息
+        });
     });
 });

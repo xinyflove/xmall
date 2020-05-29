@@ -58,11 +58,11 @@ class CartService
     public static function getUserCheckedList($user_id)
     {
         $productTotalPrice = 0;
-        $list = Cart::where(['user_id'=>$user_id, 'checked'=>Cart::CHECKED])->get();
+        $list = Cart::with(['product'])->where(['user_id'=>$user_id, 'checked'=>Cart::CHECKED])->get();
 
         foreach ($list as $item)
         {
-            $item->product_total = $item->product->price * $item->quantity;
+            $item->product_total = $item->product['price'] * $item->quantity;
             $productTotalPrice += $item->product_total;
         }
 

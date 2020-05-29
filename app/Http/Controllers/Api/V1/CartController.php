@@ -49,18 +49,22 @@ class CartController extends Controller
         $product = Product::find($productId);
         if (!$product)
         {
+            // 商品不存在
             return error_json(10300);
         }
-        if ($product->status == 0)
+        if ($product->status == Product::STATUS_IN_STOCK)
         {
+            // 商品已下架
             return error_json(10301);
         }
         if ($product->stock <= 0)
         {
+            // 商品已售罄
             return error_json(10302);
         }
         if ($product->stock < $count)
         {
+            // 商品库存不足
             return error_json(10303);
         }
 
@@ -234,18 +238,22 @@ class CartController extends Controller
         $product = Product::find($productId);
         if (!$product)
         {
+            // 商品不存在
             return error_json(10300);
         }
-        if ($product->status == 0)
+        if ($product->status == Product::STATUS_IN_STOCK)
         {
+            // 商品已下架
             return error_json(10301);
         }
         if ($product->stock <= 0)
         {
+            // 商品已售罄
             return error_json(10302);
         }
         if ($product->stock < $count)
         {
+            // 商品库存不足
             return error_json(10303);
         }
 

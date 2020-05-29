@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    const STATUS_DELETE = -1;// 已删除
+    const STATUS_IN_STOCK = 0;// 未上架
+    const STATUS_ON_SALE = 0;// 已上架
     //protected $guarded = [];// 不可以注入的字段数据
 
     /**

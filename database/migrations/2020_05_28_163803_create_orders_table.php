@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->integer('user_id')->comment('用户ID');
             $table->string('status', 30)->comment('订单状态');
             $table->string('cancel_status', 30)->default('NO_APPLY_CANCEL')->comment('取消订单状态');
-            $table->string('cancel_reason')->comment('取消订单原因');
+            $table->string('cancel_reason')->default('')->comment('取消订单原因');
             $table->string('pay_type', 10)->default('online')->comment('支付类型');
             $table->decimal('payment', 20, 2)->default('0.00')->comment('实付金额,订单最终总额');
             $table->decimal('points_fee', 20, 2)->default('0.00')->comment('积分抵扣金额');
@@ -26,7 +26,7 @@ class CreateOrdersTable extends Migration
             $table->decimal('post_fee', 20, 2)->default('0.00')->comment('邮费');
             $table->decimal('payed_fee', 20, 2)->default('0.00')->comment('已支付金额(包含红包支付的金额)');
             $table->decimal('hongbao_fee', 20, 2)->default('0.00')->comment('红包支付金额');
-            $table->string('user_hongbao_id')->comment('红包支付金额');
+            $table->string('user_hongbao_id')->default('')->comment('红包支付金额');
             $table->string('name', 50)->comment('收货人');
             $table->string('mobile', 20)->comment('手机号码');
             $table->string('tel', 20)->comment('固定电话');

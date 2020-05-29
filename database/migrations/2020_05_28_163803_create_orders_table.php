@@ -14,6 +14,7 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->unsignedBigInteger('id')->unique()->comment('订单号');
             $table->integer('user_id')->comment('用户ID');
             $table->string('status', 30)->comment('订单状态');

@@ -66,6 +66,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
             Route::post('create', 'OrderController@create'); // 提交订单
             Route::get('pay', 'OrderController@pay'); // 获取支付信息
             Route::get('query_pay_status', 'OrderController@queryPayStatus'); // 获取订单状态
+            Route::get('detail', 'OrderController@detail'); // 获取订单详情
+            Route::get('cancel', 'OrderController@cancel'); // 取消订单
+            Route::get('list', 'OrderController@index'); // 订单列表
         });
         /*用户收货地址模块*/
         Route::group(['prefix' => 'ship'], function () {

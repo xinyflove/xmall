@@ -18,6 +18,49 @@ class OrderController extends Controller
     const IMAGE_HOST = 'http://127.0.0.1:8000';
 
     /**
+     * 订单列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
+    {
+        $filter['pageSize'] = intval($request->input('pageSize', 20));
+        $filter['pageNum'] = intval($request->input('pageNum', 1));
+        $user_id = $request->userInfo['id'];
+
+        $where = [];
+        $order_by = ['created_at', 'DESC'];
+        $offset = ($filter['pageNum'] - 1) * $filter['pageSize'];
+
+        $order = Order::with(['order_item'])->where($where);
+        $total = $order->count();
+        $list = $order->orderBy($order_by[0], $order_by[1])
+            ->offset($offset)->limit($filter['pageSize'])->get();
+
+        foreach ($list as &$item)
+        {
+            $item['image_host'] = self::IMAGE_HOST;
+            $item['status_desc'] = Order::STATUS_DESC[$item['status']];
+        }
+        unset($item);
+
+        $pages = ceil($total/$filter['pageSize']);
+
+        $data = [
+            'total' => $total,
+            'list' => $list,
+            'pages' => $pages,
+            //'hasPreviousPage' => $hasPreviousPage,
+            //'hasNextPage' => $hasNextPage,
+            //'prePage' => $prePage,
+            //'nextPage' => $nextPage,
+            'pageNum' => $filter['pageNum'],
+        ];
+
+        return success_json($data);
+    }
+
+    /**
      * 获取产品列表信息
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -96,6 +139,7 @@ class OrderController extends Controller
                 'product_id' => $c->product_id,
                 'title' => $c->product['title'],
                 'main_img' => $c->product['main_img'],
+                'price' => $c->product['price'],
                 'quantity' => $c->quantity,
                 'payment' => $_payment,
                 'total_fee' => $_total_fee,
@@ -222,5 +266,78 @@ class OrderController extends Controller
 
         $data = true;
         return success_json($data);
+    }
+
+    /**
+     * 获取订单详情
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function detail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'orderNo' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $orderNo = $request->input('orderNo');
+        $order = Order::with(['order_item'])->find($orderNo);
+        if (!$order)
+        {
+            // 获取订单信息失败
+            return error_json(10602);
+        }
+
+        $order->status_desc = Order::STATUS_DESC[$order->status];
+        $order->need_pay = $order->status == Order::STATUS_WAIT_BUYER_PAY ? true : false;
+        $order->pay_type_desc = Order::PAY_TYPE_DESC[$order->pay_type];
+        $order->is_cancelable = Order::getIsCancelable($order->status);
+        $order->image_host = self::IMAGE_HOST;
+
+        return success_json($order);
+    }
+
+    /**
+     * 取消订单
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function cancel(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'orderNo' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return error_json(10001);
+        };
+
+        $orderNo = $request->input('orderNo');
+        $order = Order::find($orderNo);
+        if (!$order)
+        {
+            // 获取订单信息失败
+            return error_json(10602);
+        }
+
+        $is_cancelable = Order::getIsCancelable($order->status);
+        if (!$is_cancelable)
+        {
+            // 订单取消失败
+            return error_json(10606);
+        }
+
+        try {
+            $order->status = Order::STATUS_ORDER_CLOSED_BY_SYSTEM;
+            $order->cancel_status = Order::CANCEL_STATUS_SUCCESS;
+            $order->cancel_reason = '用户取消订单';
+            $order->save();
+        } catch (\Exception $e) {
+            // 订单取消失败
+            return error_json(10606);
+        }
+
+        return success_json();
     }
 }

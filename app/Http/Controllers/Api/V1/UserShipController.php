@@ -71,7 +71,7 @@ class UserShipController extends Controller
             DB::beginTransaction();
             if ($def)
             {
-                UserShip::where('user_id', $user_id)->update('def', UserShip::SHIP_NOR);
+                UserShip::where('user_id', $user_id)->update(['def'=>UserShip::SHIP_NOR]);
             }
 
             UserShip::create(compact('name', 'mobile', 'province', 'city', 'district', 'address', 'zip', 'def', 'tel', 'user_id'));

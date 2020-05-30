@@ -30,7 +30,7 @@
 
 1. 下载源码
 
-从 [https://github.com/xinyflove/xbook](https://github.com/xinyflove/xmall) 下载代码到本地
+从 [https://github.com/xinyflove/x](https://github.com/xinyflove/xmall) 下载代码到本地
 
 2. 执行 composer 命令
 

@@ -6,18 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Rules\Mobile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
-    {
-        $data = 'user index';
-        return success_json($data);
-    }
 
     /**
      * 用户登录
@@ -35,17 +29,18 @@ class UserController extends Controller
             return error_json(10001);
         };
 
-        $params = request(['username', 'password']);
+        $username = $request->input('username');
+        $password = $request->input('password');
 
-        if (!Auth::attempt($params)) {
+        $user = User::where(['username'=>$username])->first();
+
+        if (!$user || !Hash::check($password, $user->password)) {
             return error_json(10102);
         }
 
-        $userInfo = Auth::user();
-
         $data = [
-            'id' => $userInfo->id,
-            'token' => $userInfo->token,
+            'id' => $user->id,
+            'token' => $user->token,
         ];
 
         return success_json($data);

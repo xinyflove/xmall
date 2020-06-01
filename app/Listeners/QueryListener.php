@@ -29,13 +29,9 @@ class QueryListener
     {
         if($event->sql)
         {
-            // 把sql的日志独立分开
-            //$fileName = storage_path('logs/sql/'.date('Y-m-d').'.log');
-            //Log::file($fileName, 'info');
             $sql = str_replace("?", "'%s'", $event->sql);
             $log = vsprintf($sql, $event->bindings);
-            //dd($log);
-            //Log::info($log);
+            
             Log::channel('sqllog')->info($log);
         }
     }

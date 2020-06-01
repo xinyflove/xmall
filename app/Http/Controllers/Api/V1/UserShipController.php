@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\UserShip;
 use App\Rules\Mobile;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 

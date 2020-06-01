@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Rules\Mobile;
 use Illuminate\Http\Request;

@@ -89,6 +89,12 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+
+        'sqllog' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/sqls/sql.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];

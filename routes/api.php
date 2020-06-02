@@ -33,11 +33,11 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
         Route::post('forget_reset_password', 'UserController@forgetResetPassword'); // 重置密码
     });
 
+    /*商品模块*/
     Route::group(['prefix' => 'product'], function () {
         Route::get('list', 'ProductController@index'); // 获取商品列表
         Route::get('detail', 'ProductController@detail'); // 获取商品详细信息
     });
-
 
     /*需要登录*/
     Route::group(['middleware' => ['checkuser']], function () {

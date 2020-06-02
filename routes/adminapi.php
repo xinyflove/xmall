@@ -23,5 +23,12 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
     Route::group(['prefix' => 'admin'], function () {
         Route::post('user/login', 'AdminUserController@login'); // 管理员登录
     });
-    
+
+    /*需要登录*/
+    Route::group(['middleware' => ['checkadmin']], function () {
+        /*管理员模块*/
+        Route::group(['prefix' => 'admin'], function () {
+            Route::get('user/login_info', 'AdminUserController@loginInfo'); // 登录信息
+        });
+    });
 });

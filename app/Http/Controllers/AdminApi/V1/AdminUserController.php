@@ -40,4 +40,19 @@ class AdminUserController extends Controller
 
         return success_json($data);
     }
+
+    /**
+     * 登录信息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @author PeakXin<xinyflove@sina.com>
+     */
+    public function loginInfo(Request $request)
+    {
+        $data = [
+            'username' => $request->userInfo['username']
+        ];
+
+        return success_json($data);
+    }
 }

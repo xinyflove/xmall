@@ -30,5 +30,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'V1'], function () {
         Route::group(['prefix' => 'admin'], function () {
             Route::get('user/login_info', 'AdminUserController@loginInfo'); // 登录信息
         });
+
+        /*文件管理*/
+        Route::group(['prefix' => 'file'], function () {
+            Route::post('upload', 'FileController@upload'); // 文件上传
+        });
     });
 });

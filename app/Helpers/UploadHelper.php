@@ -8,16 +8,17 @@ class UploadHelper
 {
     /**
      * 存储文件
+     * @param $title
      * @param $file
      * @param string $type
      * @return string
      */
-    public static function storeFile($file, $type='attachment')
+    public static function storeFile($title, $file, $type='attachment')
     {
-        $savePath = $type . '/' . date('Ymd');
-        $path = $file->storePublicly($savePath);
-        
-        return 'storage/' . $path;
+        $savePath = 'storage/' . $type . '/' . date('Ymd') . '/';
+        $savePathTitle = $savePath . $title;
+        $file->move($savePath, $title);
+        return $savePathTitle;
     }
 
     /**

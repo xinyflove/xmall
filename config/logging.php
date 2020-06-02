@@ -89,7 +89,7 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
-
+        /*保存sql日志*/
         'sqllog' => [
             'driver' => 'daily',
             'path' => storage_path('logs/sqls/sql.log'),

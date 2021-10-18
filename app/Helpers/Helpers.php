@@ -257,7 +257,7 @@ if (! function_exists('is_mobile'))
      */
     function is_mobile($value)
     {
-        $rule = '^1(3|4|5|7|8)[0-9]\d{8}$^';
+        $rule = '/^1(3|4|5|7|8)[0-9]\d{8}$/';
         $result = preg_match($rule, $value);
         if($result)
         {

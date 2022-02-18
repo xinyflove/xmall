@@ -191,6 +191,7 @@ if (! function_exists('get_sign'))
      * 获取签名
      * @param $data
      * @return string
+     * @author PeakXin<xinyflove@sina.com>
      */
     function get_sign($data)
     {
@@ -211,6 +212,7 @@ if (! function_exists('verify_sign'))
      * @param $data
      * @param string $code
      * @return bool
+     * @author PeakXin<xinyflove@sina.com>
      */
     function verify_sign($data, &$code='')
     {
@@ -254,6 +256,7 @@ if (! function_exists('is_mobile'))
      * 验证手机号
      * @param $value
      * @return bool
+     * @author PeakXin<xinyflove@sina.com>
      */
     function is_mobile($value)
     {
@@ -273,6 +276,7 @@ if (! function_exists('is_people_id'))
      * 严格判断身份证有效性
      * @param $id_card
      * @return bool
+     * @author PeakXin<xinyflove@sina.com>
      */
     function is_people_id($id_card)
     {
@@ -296,6 +300,7 @@ if (! function_exists('idcard_checksum18'))
      * 18位身份证校验码有效性检查
      * @param $idcard
      * @return bool
+     * @author PeakXin<xinyflove@sina.com>
      */
     function idcard_checksum18($idcard)
     {
@@ -324,6 +329,7 @@ if (! function_exists('idcard_verify_number'))
      * 计算身份证校验码，根据国家标准GB 11643-1999
      * @param $idcard_base
      * @return bool|string
+     * @author PeakXin<xinyflove@sina.com>
      */
     function idcard_verify_number($idcard_base)
     {
@@ -357,6 +363,7 @@ if (! function_exists('idcard_15to18'))
      * 将15位身份证升级到18位
      * @param $idcard
      * @return bool
+     * @author PeakXin<xinyflove@sina.com>
      */
     function idcard_15to18($idcard)
     {
@@ -382,5 +389,110 @@ if (! function_exists('idcard_15to18'))
         $idcard = $idcard.idcard_verify_number($idcard);
 
         return $idcard;
+    }
+}
+
+if (! function_exists('array_sort'))
+{
+    /**
+     * 二维数组根据某个字段排序
+     * @param array $array 要排序的数组
+     * @param string $keys 要排序的键字段
+     * @param int $sort 排序类型  SORT_ASC | SORT_DESC
+     * @return mixed 排序后的数组
+     * @author PeakXin<xinyflove@sina.com>
+     */
+    function array_sort($array, $keys, $sort = SORT_DESC) {
+        $keysValue = [];
+        foreach ($array as $k => $v) {
+            $keysValue[$k] = $v[$keys];
+        }
+        array_multisort($keysValue, $sort, $array);
+        return $array;
+    }
+}
+
+if (! function_exists('amount_to_cn'))
+{
+    /**
+     * 将数值金额转换为中文大写金额
+     * @param $amount
+     * @param int $type 补整类型,0:到角补整;1:到元补整
+     * @return string
+     * @author PeakXin<xinyflove@sina.com>
+     */
+    function amount_to_cn($amount, $type = 1)
+    {
+        // 判断输出的金额是否为数字或数字字符串
+        if (!is_numeric($amount)) {
+            return "要转换的金额只能为数字!";
+        }
+
+        // 金额为0,则直接输出"零元整"
+        if ($amount == 0) {
+            return "零元整";
+        }
+
+        // 金额不能为负数
+        if ($amount < 0) {
+            return "要转换的金额不能为负数!";
+        }
+
+        // 金额不能超过万亿,即12位
+        if (strlen($amount) > 12) {
+            return "要转换的金额不能为万亿及更高金额!";
+        }
+
+        // 预定义中文转换的数组
+        $digital = array('零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖');
+        // 预定义单位转换的数组
+        $position = array('仟', '佰', '拾', '亿', '仟', '佰', '拾', '万', '仟', '佰', '拾', '元');
+
+        // 将金额的数值字符串拆分成数组
+        $amountArr = explode('.', $amount);
+
+        // 将整数位的数值字符串拆分成数组
+        $integerArr = str_split($amountArr[0], 1);
+
+        $result = '';// 将整数部分替换成大写汉字
+        $integerArrLength = count($integerArr);// 整数位数组的长度
+        $positionLength = count($position);// 单位数组的长度
+
+        // 根据整数位数组的长度遍历
+        for ($i = 0; $i < $integerArrLength; $i++) {
+            $number = $integerArr[$i];// 当前数字
+            $cNumber = $digital[$number];// 中文数字
+            $uIndex = $positionLength - $integerArrLength + $i;// 单位位置索引
+            $unit = $position[$uIndex];
+
+            // 如果数值不为0,则正常转换
+            if ($number != 0) {
+                $result .= "{$cNumber}{$unit}";
+            } else {
+                // 如果数值为0, 且单位是亿,万,元这三个的时候,则直接显示单位
+                if (($uIndex + 1) % 4 == 0) {
+                    $result .= "{$unit}";
+                } else if ($integerArr[$i+1] != 0) {// 如果数值为0，且右边数字不为0，则直接显示零
+                    $result .= $digital[0];
+                }
+            }
+        }
+
+        // 如果小数位也要转换
+        if ($type == 0) {
+            // 将小数位的数值字符串拆分成数组
+            $decimalArr = str_split($amountArr[1], 1);
+            // 将角替换成大写汉字. 如果为0,则不替换
+            if ($decimalArr[0] != 0) {
+                $result = $result . $digital[$decimalArr[0]] . '角';
+            }
+            // 将分替换成大写汉字. 如果为0,则不替换
+            if ($decimalArr[1] != 0) {
+                $result = $result . $digital[$decimalArr[1]] . '分';
+            }
+        } else {
+            $result = $result . '整';
+        }
+        return $result;
     }
 }
